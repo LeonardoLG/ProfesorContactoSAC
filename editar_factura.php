@@ -12,13 +12,13 @@
 	$active_facturas="active";
 	$active_productos="";
 	$active_clientes="";
-	$active_usuarios="";	
+	$active_usuarios="";
 	$title="Editar Factura | Simple Invoice";
-	
+
 	/* Connect To Database*/
 	require_once ("config/db.php");//Contiene las variables de configuracion para conectar a la base de datos
 	require_once ("config/conexion.php");//Contiene funcion que conecta a la base de datos
-	
+
 	if (isset($_GET['id_factura']))
 	{
 		$id_factura=intval($_GET['id_factura']);
@@ -39,14 +39,14 @@
 				$numero_factura=$rw_factura['numero_factura'];
 				$_SESSION['id_factura']=$id_factura;
 				$_SESSION['numero_factura']=$numero_factura;
-		}	
+		}
 		else
 		{
 			header("location: facturas.php");
-			exit;	
+			exit;
 		}
-	} 
-	else 
+	}
+	else
 	{
 		header("location: facturas.php");
 		exit;
@@ -60,24 +60,24 @@
   <body>
 	<?php
 	include("navbar.php");
-	?>  
+	?>
     <div class="container">
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<h4><i class='glyphicon glyphicon-edit'></i> Editar Factura</h4>
 		</div>
 		<div class="panel-body">
-		<?php 
+		<?php
 			include("modal/buscar_productos.php");
-			include("modal/registro_clientes.php");
-			include("modal/registro_productos.php");
+			include("modal/registro_alumno.php");
+			include("modal/registro_cursos.php");
 		?>
 			<form class="form-horizontal" role="form" id="datos_factura">
 				<div class="form-group row">
 				  <label for="nombre_cliente" class="col-md-1 control-label">Cliente</label>
 				  <div class="col-md-3">
 					  <input type="text" class="form-control input-sm" id="nombre_cliente" placeholder="Selecciona un cliente" required value="<?php echo $nombre_cliente;?>">
-					  <input id="id_cliente" name="id_cliente" type='hidden' value="<?php echo $id_cliente;?>">	
+					  <input id="id_cliente" name="id_cliente" type='hidden' value="<?php echo $id_cliente;?>">
 				  </div>
 				  <label for="tel1" class="col-md-1 control-label">Teléfono</label>
 							<div class="col-md-2">
@@ -129,8 +129,8 @@
 								</select>
 							</div>
 						</div>
-				
-				
+
+
 				<div class="col-md-12">
 					<div class="pull-right">
 						<button type="submit" class="btn btn-default">
@@ -148,17 +148,17 @@
 						<button type="button" class="btn btn-default" onclick="imprimir_factura('<?php echo $id_factura;?>')">
 						  <span class="glyphicon glyphicon-print"></span> Imprimir
 						</button>
-					</div>	
+					</div>
 				</div>
-			</form>	
+			</form>
 			<div class="clearfix"></div>
-				<div class="editar_factura" class='col-md-12' style="margin-top:10px"></div><!-- Carga los datos ajax -->	
-			
-		<div id="resultados" class='col-md-12' style="margin-top:10px"></div><!-- Carga los datos ajax -->			
-			
+				<div class="editar_factura" class='col-md-12' style="margin-top:10px"></div><!-- Carga los datos ajax -->
+
+		<div id="resultados" class='col-md-12' style="margin-top:10px"></div><!-- Carga los datos ajax -->
+
 		</div>
-	</div>		
-		 
+	</div>
+
 	</div>
 	<hr>
 	<?php
@@ -171,7 +171,7 @@
 	<script>
 		$(function() {
 						$("#nombre_cliente").autocomplete({
-							source: "./ajax/autocomplete/clientes.php",
+							source: "./ajax/autocomplete/alumno.php",
 							minLength: 2,
 							select: function(event, ui) {
 								event.preventDefault();
@@ -179,21 +179,21 @@
 								$('#nombre_cliente').val(ui.item.nombre_cliente);
 								$('#tel1').val(ui.item.telefono_cliente);
 								$('#mail').val(ui.item.email_cliente);
-																
-								
+
+
 							 }
 						});
-						 
-						
+
+
 					});
-					
+
 	$("#nombre_cliente" ).on( "keydown", function( event ) {
 						if (event.keyCode== $.ui.keyCode.LEFT || event.keyCode== $.ui.keyCode.RIGHT || event.keyCode== $.ui.keyCode.UP || event.keyCode== $.ui.keyCode.DOWN || event.keyCode== $.ui.keyCode.DELETE || event.keyCode== $.ui.keyCode.BACKSPACE )
 						{
 							$("#id_cliente" ).val("");
 							$("#tel1" ).val("");
 							$("#mail" ).val("");
-											
+
 						}
 						if (event.keyCode==$.ui.keyCode.DELETE){
 							$("#nombre_cliente" ).val("");
@@ -201,7 +201,7 @@
 							$("#tel1" ).val("");
 							$("#mail" ).val("");
 						}
-			});	
+			});
 	</script>
 
   </body>

@@ -1,16 +1,13 @@
 <?php
 include('is_logged.php');//Archivo verifica que el usario que intenta acceder a la URL esta logueado
 	/*Inicia validacion del lado del servidor*/
-	if (empty($_POST['codigo'])) {
-           $errors[] = "Código vacío";
-        } else if (empty($_POST['nombre'])){
+	if (empty($_POST['nombre'])){
 			$errors[] = "Nombre del curso vacío";
 		} else if ($_POST['estado']==""){
 			$errors[] = "Selecciona el estado del curso";
 		} else if (empty($_POST['precio'])){
 			$errors[] = "Precio de venta vacío";
 		} else if (
-			!empty($_POST['codigo']) &&
 			!empty($_POST['nombre']) &&
 			$_POST['estado']!="" &&
 			!empty($_POST['precio'])
@@ -19,12 +16,16 @@ include('is_logged.php');//Archivo verifica que el usario que intenta acceder a 
 		require_once ("../config/db.php");//Contiene las variables de configuracion para conectar a la base de datos
 		require_once ("../config/conexion.php");//Contiene funcion que conecta a la base de datos
 		// escaping, additionally removing everything that could be (html/javascript-) code
-		$codigo=mysqli_real_escape_string($con,(strip_tags($_POST["codigo"],ENT_QUOTES)));
+
 		$nombre=mysqli_real_escape_string($con,(strip_tags($_POST["nombre"],ENT_QUOTES)));
 		$estado=intval($_POST['estado']);
 		$precio_venta=floatval($_POST['precio']);
-		$date_added=date("Y-m-d H:i:s");
-		$sql="INSERT INTO products (codigo_producto, nombre_producto, status_producto, date_added, precio_producto) VALUES ('$codigo','$nombre','$estado','$date_added','$precio_venta')";
+		$idprofesor=intval($_POST['idprofesor']);
+		$a="SELECT MAX(idcurso) as num from curso;";
+		$b=mysqli_query($con,$a);
+		$c=mysqli_fetch_array($b);
+		$max_id=$c['num']+1;
+		$sql="INSERT into curso VALUES ('$max_id','$nombre','$estado','$precio_venta','$idprofesor')";
 		$query_new_insert = mysqli_query($con,$sql);
 			if ($query_new_insert){
 				$messages[] = "El curso ha sido ingresado satisfactoriamente.";
@@ -34,13 +35,13 @@ include('is_logged.php');//Archivo verifica que el usario que intenta acceder a 
 		} else {
 			$errors []= "Error desconocido.";
 		}
-		
+
 		if (isset($errors)){
-			
+
 			?>
 			<div class="alert alert-danger" role="alert">
 				<button type="button" class="close" data-dismiss="alert">&times;</button>
-					<strong>Error!</strong> 
+					<strong>Error!</strong>
 					<?php
 						foreach ($errors as $error) {
 								echo $error;
@@ -50,7 +51,7 @@ include('is_logged.php');//Archivo verifica que el usario que intenta acceder a 
 			<?php
 			}
 			if (isset($messages)){
-				
+
 				?>
 				<div class="alert alert-success" role="alert">
 						<button type="button" class="close" data-dismiss="alert">&times;</button>

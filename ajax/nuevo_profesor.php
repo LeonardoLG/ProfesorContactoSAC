@@ -7,7 +7,7 @@ if (version_compare(PHP_VERSION, '5.3.7', '<')) {
     // if you are using PHP 5.3 or PHP 5.4 you have to include the password_api_compatibility_library.php
     // (this library adds the PHP 5.5 password hashing functions to older versions of PHP)
     require_once("../libraries/password_compatibility_library.php");
-}		
+}
 		if (empty($_POST['firstname'])){
 			$errors[] = "Nombres vacíos";
 		} elseif (empty($_POST['lastname'])){
@@ -46,30 +46,31 @@ if (version_compare(PHP_VERSION, '5.3.7', '<')) {
         ) {
             require_once ("../config/db.php");//Contiene las variables de configuracion para conectar a la base de datos
 			require_once ("../config/conexion.php");//Contiene funcion que conecta a la base de datos
-			
+
 				// escaping, additionally removing everything that could be (html/javascript-) code
                 $firstname = mysqli_real_escape_string($con,(strip_tags($_POST["firstname"],ENT_QUOTES)));
 				$lastname = mysqli_real_escape_string($con,(strip_tags($_POST["lastname"],ENT_QUOTES)));
 				$user_name = mysqli_real_escape_string($con,(strip_tags($_POST["user_name"],ENT_QUOTES)));
                 $user_email = mysqli_real_escape_string($con,(strip_tags($_POST["user_email"],ENT_QUOTES)));
 				$user_password = $_POST['user_password_new'];
-				$date_added=date("Y-m-d H:i:s");
                 // crypt the user's password with PHP 5.5's password_hash() function, results in a 60 character
                 // hash string. the PASSWORD_DEFAULT constant is defined by the PHP 5.5, or if you are using
                 // PHP 5.3/5.4, by the password hashing compatibility library
 				$user_password_hash = password_hash($user_password, PASSWORD_DEFAULT);
-					
+
                 // check if user or email address already exists
-                $sql = "SELECT * FROM users WHERE user_name = '" . $user_name . "' OR user_email = '" . $user_email . "';";
+                $sql = "SELECT * FROM profesor WHERE nombre = '" . $user_name . "' OR email = '" . $user_email . "';";
                 $query_check_user_name = mysqli_query($con,$sql);
-				$query_check_user=mysqli_num_rows($query_check_user_name);
+				        $query_check_user=mysqli_num_rows($query_check_user_name);
                 if ($query_check_user == 1) {
                     $errors[] = "Lo sentimos , el nombre de usuario ó la dirección de correo electrónico ya está en uso.";
                 } else {
-					// write new user's data into database
-                    $sql = "INSERT INTO users (firstname, lastname, user_name, user_password_hash, user_email, date_added)
-                            VALUES('".$firstname."','".$lastname."','" . $user_name . "', '" . $user_password_hash . "', '" . $user_email . "','".$date_added."');";
-                    $query_new_user_insert = mysqli_query($con,$sql);
+                  $a="SELECT MAX(idprofesor) as num from profesor;";
+                  $b=mysqli_query($con,$a);
+                  $c=mysqli_fetch_array($b);
+                  $max_id=$c['num']+1;
+                  $sql = "INSERT INTO profesor VALUES('".$max_id."','".$firstname."','".$lastname."','" . $user_name . "', '" . $user_password_hash . "', '" . $user_email . "','user');";
+                  $query_new_user_insert = mysqli_query($con,$sql);
 
                     // if user has been added successfully
                     if ($query_new_user_insert) {
@@ -78,17 +79,17 @@ if (version_compare(PHP_VERSION, '5.3.7', '<')) {
                         $errors[] = "Lo sentimos , el registro falló. Por favor, regrese y vuelva a intentarlo.";
                     }
                 }
-            
+
         } else {
             $errors[] = "Un error desconocido ocurrió.";
         }
-		
+
 		if (isset($errors)){
-			
+
 			?>
 			<div class="alert alert-danger" role="alert">
 				<button type="button" class="close" data-dismiss="alert">&times;</button>
-					<strong>Error!</strong> 
+					<strong>Error!</strong>
 					<?php
 						foreach ($errors as $error) {
 								echo $error;
@@ -98,7 +99,7 @@ if (version_compare(PHP_VERSION, '5.3.7', '<')) {
 			<?php
 			}
 			if (isset($messages)){
-				
+
 				?>
 				<div class="alert alert-success" role="alert">
 						<button type="button" class="close" data-dismiss="alert">&times;</button>

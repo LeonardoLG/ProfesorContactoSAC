@@ -15,7 +15,7 @@
 				success:function(data){
 					$(".outer_div").html(data).fadeIn('slow');
 					$('#loader').html('');
-					
+
 				}
 			})
 		}
@@ -38,7 +38,7 @@
 			return false;
 			}
 			//Fin validacion
-			
+
 			$.ajax({
         type: "POST",
         url: "./ajax/editar_facturacion.php",
@@ -51,10 +51,10 @@
 		}
 			});
 		}
-		
+
 			function eliminar (id)
 		{
-			
+
 			$.ajax({
         type: "GET",
         url: "./ajax/editar_facturacion.php",
@@ -68,10 +68,10 @@
 			});
 
 		}
-		
+
 		$("#datos_factura").submit(function(event){
 		  var id_cliente = $("#id_cliente").val();
-	  
+
 		  if (id_cliente==""){
 			  alert("Debes seleccionar un cliente");
 			  $("#nombre_cliente").focus();
@@ -89,13 +89,13 @@
 						$(".editar_factura").html(datos);
 					}
 			});
-			
+
 			 event.preventDefault();
 	 	});
-		
+
 		$( "#guardar_cliente" ).submit(function( event ) {
 		  $('#guardar_datos').attr("disabled", true);
-		  
+
 		 var parametros = $(this).serialize();
 			 $.ajax({
 					type: "POST",
@@ -112,14 +112,14 @@
 			});
 		  event.preventDefault();
 		})
-		
+
 		$( "#guardar_producto" ).submit(function( event ) {
 		  $('#guardar_datos').attr("disabled", true);
-		  
+
 		 var parametros = $(this).serialize();
 			 $.ajax({
 					type: "POST",
-					url: "ajax/nuevo_producto.php",
+					url: "ajax/nuevo_curso.php",
 					data: parametros,
 					 beforeSend: function(objeto){
 						$("#resultados_ajax_productos").html("Mensaje: Cargando...");

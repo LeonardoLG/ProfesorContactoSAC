@@ -12,9 +12,10 @@
 	$active_facturas="active";
 	$active_productos="";
 	$active_clientes="";
-	$active_usuarios="";	
-	$title="Nueva Factura | Simple Invoice";
-	
+	$active_usuarios="";
+	$active_informe="";
+	$title="Nueva Factura";
+
 	/* Connect To Database*/
 	require_once ("config/db.php");//Contiene las variables de configuracion para conectar a la base de datos
 	require_once ("config/conexion.php");//Contiene funcion que conecta a la base de datos
@@ -27,44 +28,48 @@
   <body>
 	<?php
 	include("navbar.php");
-	?>  
+	?>
     <div class="container">
 	<div class="panel panel-info">
 		<div class="panel-heading">
 			<h4><i class='glyphicon glyphicon-edit'></i> Nueva Factura</h4>
 		</div>
 		<div class="panel-body">
-		<?php 
+		<?php
 			include("modal/buscar_productos.php");
-			include("modal/registro_clientes.php");
-			include("modal/registro_productos.php");
+			include("modal/registro_alumno.php");
+			include("modal/registro_cursos.php");
+			$a="SELECT MAX(idfactura) as num from factura;";
+			$b=mysqli_query($con,$a);
+			$c=mysqli_fetch_array($b);
+			$max_id_factura=$c['num']+1;
 		?>
 			<form class="form-horizontal" role="form" id="datos_factura">
 				<div class="form-group row">
-				  <label for="nombre_cliente" class="col-md-1 control-label">Cliente</label>
-				  <div class="col-md-3">
-					  <input type="text" class="form-control input-sm" id="nombre_cliente" placeholder="Selecciona un cliente" required>
-					  <input id="id_cliente" type='hidden'>	
-				  </div>
-				  <label for="tel1" class="col-md-1 control-label">Teléfono</label>
-							<div class="col-md-2">
-								<input type="text" class="form-control input-sm" id="tel1" placeholder="Teléfono" readonly>
-							</div>
-					<label for="mail" class="col-md-1 control-label">Email</label>
-							<div class="col-md-3">
-								<input type="text" class="form-control input-sm" id="mail" placeholder="Email" readonly>
-							</div>
-				 </div>
+						<label for="nombre_cliente" class="col-md-1 control-label">Alumno</label>
+						<div class="col-md-3">
+							<select class="form-control" id="idalumno" name="idalumno" required>
+								<option value="">Selecciona Alumno: </option>
+								<?php
+								$a="SELECT idalumno , nombre, apellido from alumno;";
+								$query=mysqli_query($con,$a);
+								while ($row=mysqli_fetch_array($query)){
+								?>
+								<option value=<?php echo $row['idalumno']; ?> selected><?php echo  $row['nombre'],' ',$row['apellido'];?></option>
+							<?php } ?>
+							</select>
+						</div>
+					</div>
 						<div class="form-group row">
-							<label for="empresa" class="col-md-1 control-label">Usuario</label>
+							<label for="empresa" class="col-md-1 control-label">Profesor</label>
 							<div class="col-md-3">
 								<select class="form-control input-sm" id="id_vendedor">
 									<?php
-										$sql_vendedor=mysqli_query($con,"select * from users order by lastname");
-										while ($rw=mysqli_fetch_array($sql_vendedor)){
-											$id_vendedor=$rw["user_id"];
-											$nombre_vendedor=$rw["firstname"]." ".$rw["lastname"];
-											if ($id_vendedor==$_SESSION['user_id']){
+										$sql=mysqli_query($con,"select * from profesor");
+										while ($rw=mysqli_fetch_array($sql)){
+											$id_vendedor=$rw["idprofesor"];
+											$nombre_vendedor=$rw["nombre"]." ".$rw["apellido"];
+											if ($id_vendedor==$_SESSION['idprofesor']){
 												$selected="selected";
 											} else {
 												$selected="";
@@ -84,42 +89,31 @@
 							<div class="col-md-3">
 								<select class='form-control input-sm' id="condiciones">
 									<option value="1">Efectivo</option>
-									<option value="2">Cheque</option>
-									<option value="3">Transferencia bancaria</option>
-									<option value="4">Crédito</option>
+									<option value="3">Tarjeta Debito</option>
+									<option value="4">Tarjeta Crédito</option>
 								</select>
 							</div>
 						</div>
-				
-				
+
+
 				<div class="col-md-12">
 					<div class="pull-right">
-						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#nuevoProducto">
-						 <span class="glyphicon glyphicon-plus"></span> Nuevo curso
-						</button>
-						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#nuevoCliente">
-						 <span class="glyphicon glyphicon-user"></span> Nuevo cliente
-						</button>
 						<button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal">
-						 <span class="glyphicon glyphicon-search"></span> Agregar cursos
+						 	<span class="glyphicon glyphicon-search"></span> Agregar cursos
 						</button>
 						<button type="submit" class="btn btn-default">
-						  <span class="glyphicon glyphicon-print"></span> Imprimir
+						  	<span class="glyphicon glyphicon-print"></span> Imprimir
 						</button>
-					</div>	
+					</div>
 				</div>
-			</form>	
-			
-		<div id="resultados" class='col-md-12' style="margin-top:10px"></div><!-- Carga los datos ajax -->			
+			</form>
+
+		<div id="resultados" class='col-md-12' style="margin-top:10px"></div><!-- Carga los datos ajax -->
 		</div>
-	</div>		
+	</div>
 		  <div class="row-fluid">
 			<div class="col-md-12">
-			
-	
-
-			
-			</div>	
+			</div>
 		 </div>
 	</div>
 	<hr>
@@ -133,37 +127,28 @@
 	<script>
 		$(function() {
 						$("#nombre_cliente").autocomplete({
-							source: "./ajax/autocomplete/clientes.php",
+							source: "./ajax/autocomplete/alumno.php",
 							minLength: 2,
 							select: function(event, ui) {
 								event.preventDefault();
 								$('#id_cliente').val(ui.item.id_cliente);
-								$('#nombre_cliente').val(ui.item.nombre_cliente);
-								$('#tel1').val(ui.item.telefono_cliente);
-								$('#mail').val(ui.item.email_cliente);
-																
-								
-							 }
+							}
 						});
-						 
-						
+
+
 					});
-					
+
 	$("#nombre_cliente" ).on( "keydown", function( event ) {
 						if (event.keyCode== $.ui.keyCode.LEFT || event.keyCode== $.ui.keyCode.RIGHT || event.keyCode== $.ui.keyCode.UP || event.keyCode== $.ui.keyCode.DOWN || event.keyCode== $.ui.keyCode.DELETE || event.keyCode== $.ui.keyCode.BACKSPACE )
 						{
 							$("#id_cliente" ).val("");
-							$("#tel1" ).val("");
-							$("#mail" ).val("");
-											
 						}
 						if (event.keyCode==$.ui.keyCode.DELETE){
-							$("#nombre_cliente" ).val("");
 							$("#id_cliente" ).val("");
 							$("#tel1" ).val("");
 							$("#mail" ).val("");
 						}
-			});	
+			});
 	</script>
 
   </body>
