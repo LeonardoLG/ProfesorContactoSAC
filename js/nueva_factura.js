@@ -14,7 +14,7 @@
 				success:function(data){
 					$(".outer_div").html(data).fadeIn('slow');
 					$('#loader').html('');
-					
+
 				}
 			})
 		}
@@ -22,14 +22,7 @@
 	function agregar (id)
 		{
 			var precio_venta=document.getElementById('precio_venta_'+id).value;
-			var cantidad=document.getElementById('cantidad_'+id).value;
 			//Inicia validacion
-			if (isNaN(cantidad))
-			{
-			alert('Esto no es un numero');
-			document.getElementById('cantidad_'+id).focus();
-			return false;
-			}
 			if (isNaN(precio_venta))
 			{
 			alert('Esto no es un numero');
@@ -37,7 +30,7 @@
 			return false;
 			}
 			//Fin validacion
-			
+
 			$.ajax({
         type: "POST",
         url: "./ajax/agregar_facturacion.php",
@@ -50,10 +43,10 @@
 		}
 			});
 		}
-		
+
 			function eliminar (id)
 		{
-			
+
 			$.ajax({
         type: "GET",
         url: "./ajax/agregar_facturacion.php",
@@ -67,12 +60,12 @@
 			});
 
 		}
-		
+
 		$("#datos_factura").submit(function(){
 		  var id_cliente = $("#id_cliente").val();
 		  var id_vendedor = $("#id_vendedor").val();
 		  var condiciones = $("#condiciones").val();
-		  
+
 		  if (id_cliente==""){
 			  alert("Debes seleccionar un cliente");
 			  $("#nombre_cliente").focus();
@@ -80,10 +73,10 @@
 		  }
 		 VentanaCentrada('./pdf/documentos/factura_pdf.php?id_cliente='+id_cliente+'&id_vendedor='+id_vendedor+'&condiciones='+condiciones,'Factura','','1024','768','true');
 	 	});
-		
+
 		$( "#guardar_cliente" ).submit(function( event ) {
 		  $('#guardar_datos').attr("disabled", true);
-		  
+
 		 var parametros = $(this).serialize();
 			 $.ajax({
 					type: "POST",
@@ -100,14 +93,14 @@
 			});
 		  event.preventDefault();
 		})
-		
+
 		$( "#guardar_producto" ).submit(function( event ) {
 		  $('#guardar_datos').attr("disabled", true);
-		  
+
 		 var parametros = $(this).serialize();
 			 $.ajax({
 					type: "POST",
-					url: "ajax/nuevo_producto.php",
+					url: "ajax/nuevo_curso.php",
 					data: parametros,
 					 beforeSend: function(objeto){
 						$("#resultados_ajax_productos").html("Mensaje: Cargando...");

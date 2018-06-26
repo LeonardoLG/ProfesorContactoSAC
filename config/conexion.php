@@ -1,10 +1,4 @@
 <?php
-	/*-------------------------
-	Autor: Obed Alvarado
-	Web: obedalvarado.pw
-	Mail: info@obedalvarado.pw
-	---------------------------*/
-	# conectare la base de datos
     $con=@mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     if(!$con){
         die("imposible conectarse: ".mysqli_error($con));

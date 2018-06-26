@@ -9,13 +9,13 @@
 	/* Connect To Database*/
 	require_once ("../config/db.php");//Contiene las variables de configuracion para conectar a la base de datos
 	require_once ("../config/conexion.php");//Contiene funcion que conecta a la base de datos
-	
+
 	$action = (isset($_REQUEST['action'])&& $_REQUEST['action'] !=NULL)?$_REQUEST['action']:'';
 	if($action == 'ajax'){
 		// escaping, additionally removing everything that could be (html/javascript-) code
          $q = mysqli_real_escape_string($con,(strip_tags($_REQUEST['q'], ENT_QUOTES)));
-		 $aColumns = array('codigo_producto', 'nombre_producto');//Columnas de busqueda
-		 $sTable = "products";
+		 $aColumns = array('idcurso', 'nombre');//Columnas de busqueda
+		 $sTable = "curso";
 		 $sWhere = "";
 		if ( $_GET['q'] != "" )
 		{
@@ -44,27 +44,25 @@
 		$query = mysqli_query($con, $sql);
 		//loop through fetched data
 		if ($numrows>0){
-			
+
 			?>
 			<div class="table-responsive">
 			  <table class="table">
 				<tr  class="warning">
 					<th>Código</th>
 					<th>Curso</th>
-					<th><span class="pull-right">Cant.</span></th>
 					<th><span class="pull-right">Precio</span></th>
 					<th class='text-center' style="width: 36px;">Agregar</th>
 				</tr>
 				<?php
 				while ($row=mysqli_fetch_array($query)){
-					$id_producto=$row['id_producto'];
-					$codigo_producto=$row['codigo_producto'];
-					$nombre_producto=$row['nombre_producto'];
-					$precio_venta=$row["precio_producto"];
+					$id_producto=$row['idcurso'];
+					$nombre_producto=$row['nombre'];
+					$precio_venta=$row["precio"];
 					$precio_venta=number_format($precio_venta,2);
 					?>
 					<tr>
-						<td><?php echo $codigo_producto; ?></td>
+						<td><?php echo $id_producto; ?></td>
 						<td><?php echo $nombre_producto; ?></td>
 						<td class='col-xs-1'>
 						<div class="pull-right">

@@ -1,3 +1,3 @@
 <?php
-header("Location: facturas.php");
+header("Location: profesor.php");
 ?>
